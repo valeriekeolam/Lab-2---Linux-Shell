@@ -1,0 +1,6 @@
+cd ..
+environ
+help help
+echo Testing the shell!
+clr
+quit

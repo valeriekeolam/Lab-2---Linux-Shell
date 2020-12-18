@@ -1,0 +1,101 @@
+/////////////////////////////////////////////////////////////
+Welcome to Assignment 2 - Creating a Linux Shell readme_doc.
+This project and the entirety of it's code was made completely by myself, Valerie Lam.
+
+FILES IN THIS DIRECTORY (project-2-developing-a-linux-shell-valeriekeolam):
+	- basicpg.c
+		This is a basic program that simply types "Welcome!". It's purpose is to test whether the shell
+		can run other programs that are held within this directory.
+	- batchfile.txt
+		Very simple file containing some built-in commands. It's purpose is to to test the batch mode
+		of the shell.
+	- shellv1.c
+	- shellv2.c
+	- shellv3.c
+	- shellv4.c
+		These files are versions of the shell that were made each week, according to deliverables.
+		The file and complete version is held within shellv4.c. This document is commented.
+		The other versions may only implement parsing or I/O redirection, or may have errors or may
+		not compile. They are just old versions kept in the event the updated versions were somehow\
+		mistakenly deleted.
+
+
+GOALS OF THE ASSIGNMENT:
+	- This project is a 4 week incremental project with achievement deadlines at the end of every week.
+	- The first submission is detailed pseudocode.
+	- The second submission requirements were built-in commands and file redirection.
+	- The third submission requirements were external commands, pipes, and background processing.
+	- The final submission requires all of the above, as well as the addition of a readme_doc, makefile,
+	  and testing.
+
+PURPOSE AND EXPLANATION OF EACH INDIVIDUAL FUNCTION WITHIN COMPLETED SHELLV4.C:
+	- stringOrganizer is a structure created to handle a pointer to a string, which is meant to hold the first
+	  word scanned in -- or in other words, the "command".
+	- The main function returns an integer for successful or unsuccessful execution. It accepts two variables,
+	  the number of arguments (int argc) and a character string array for all arguments scanned in 
+	  (char *argv[]).
+	  The main function instantiates the structure, and then allocates space for the variables in the struct.
+	  It then checks if the shell was executed in batch mode or interactive mode. If batch mode, it adjusts
+	  the input stream to the batch file.
+	  Then, a while loop continually prints the prompt, gets the next line of stdin or batch file, and removes
+	  the newline character at the end of the line.
+	  It then tokenizes the first word, checks if it is the word "exit", and if not, stores it as the command.
+	  Then it tokenizes the rest of the words and stores them in the string array.
+	  Then the array is checked for I/O symbols, pipes, or background execution symbols. If any are found,
+	  the appropriate flag is "raised".
+	  Original copies of the standard input and output streams are saved.
+	  If I/O symbols are found, then go to inputOutputFiles function.
+	  If pipe symbols are found, then go to isPipe function, otherwise go to execute function.
+	  Then go to fixStream function.
+	  Lastly, free the string array and the allocated buffer -- which is the string used to store next line.
+	- The function isPipe takes in the structure and splits the original line into two strings around the pipe.
+	  It then adjusts the streams so that the data produced from the first command is then used as input for
+	  the second command. The output of the second command is all that is seen. This is done using file
+	  descriptors. Note that piping only supports external commands.
+	- The function inputOutputFiles checks to see which of the I/O symbols was detected, and depending on
+	  which, it will adjust the input/output streams. If an output symbol is found, it will either append or
+	  overwrite depending on which type. This is also done using file descriptors.
+	- The function fixStream returns the input and output streams to standard input and output in preparation
+	  for handling the next command entered into shell. This is done regardless of whether the I/O streams 
+	  were adjusted.
+	- The execute function determines whether the command entered is built in or external, and executes
+	  accordingly. If it is not built in, it uses execvp().
+	- The remaining 8 functions are meant to model 8 functions that already exist in linux shells.
+
+
+HOW TO COMPILE, EXECUTE, USE, AND QUIT SHELL:
+	- In order to compile and execute the shell, type makefile.
+	- To quit the shell, you can type either exit, in any case (lower or upper), or quit, to activate the quit
+	  function.
+
+I/O REDIRECTION?
+	I/O redirection, is described as adjusting input and output "streams". 
+	Standard input is essentially "input from the keyboard". Standard output is data or text displayed to your
+	computer monitor. An adjusted input stream, in essence, is when the input data does not come from your
+	keyboard, but instead comes from a file, for example. An adjusted output stream, is known as data being
+	sent to a basic text file or document, for example. 
+
+HOW DO I USE I/O REDIRECTION?
+	To redirect input, use this symbol: <, and write the input file name after, with a space separating.
+	To redirect output, and overwrite a file if it exists already, use >, with the file name after, and space
+	separating. If the file does not exist, it will be created, so no need to make it in preparation.
+	If you want to redirect output but append (add text) instead of overwrite, use >>. Same rules about
+	spacing apply.
+
+PIPING?
+	Piping is when two commands are typed on the same line, separated by this symbol |. What this does is
+	makes it so that the first command's output is not to the screen, but is instead is sent to the second
+	command. What this means is the output of the first command becomes the input of the second. The second
+	command however has standard output.
+
+HOW DO I USE PIPING?
+	Syntax is as follows: commandOne | commandTwo. Do not forget the spaces!
+
+BACKGROUND EXECUTION?
+	Background execution allows a program to run in the background, meaning there is no need to wait for the
+	completion of the program. It will display data when it is done, rather than having the entire shell
+	append.
+HOW DO I USE BACKGROUND EXECUTION?
+	To use background execution, you add & to the end of the command line, with a space separating the final
+	word.
+
